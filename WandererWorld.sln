@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WandererWorld", "WandererWorld\WandererWorld.csproj", "{8F1C37D9-CED4-43C8-8D04-177C936AE51E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F1C37D9-CED4-43C8-8D04-177C936AE51E}.Debug|x86.ActiveCfg = Debug|x86
+		{8F1C37D9-CED4-43C8-8D04-177C936AE51E}.Debug|x86.Build.0 = Debug|x86
+		{8F1C37D9-CED4-43C8-8D04-177C936AE51E}.Release|x86.ActiveCfg = Release|x86
+		{8F1C37D9-CED4-43C8-8D04-177C936AE51E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BCFC9E8-87CE-4E87-B76C-6D528F88C55E}
+	EndGlobalSection
+EndGlobal
