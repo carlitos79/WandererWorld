@@ -30,6 +30,7 @@ namespace WandererWorld
         private RobotRenderSystem robotRenderSystem;
 
         private CollisionSystem collisionSystem;
+        private HouseSystem houseSystem;
 
         public Game1()
         {
@@ -102,9 +103,18 @@ namespace WandererWorld
                 TerrainPosition = new Vector3(0, -100, 256),
             };
 
+            var h1 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(400, 55, -100), Matrix.Identity, heightMapFireTexture);
+            var h2 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(350, 55, -200), Matrix.Identity, heightMapFireTexture);
+
             int heightMapId = EntityComponentManager.GetManager().CreateNewEntityId();
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapComponent);
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapCameraComponent);
+
+            int h1Id = EntityComponentManager.GetManager().CreateNewEntityId();
+            EntityComponentManager.GetManager().AddComponentToEntity(h1Id, h1);
+
+            int h2Id = EntityComponentManager.GetManager().CreateNewEntityId();
+            EntityComponentManager.GetManager().AddComponentToEntity(h2Id, h2);
             heightMapSystem.CreateHeightMaps();
 
             robotComponent = new RobotComponent
@@ -171,6 +181,7 @@ namespace WandererWorld
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             heightMapRenderSystem.RenderHeightMapCamera();
