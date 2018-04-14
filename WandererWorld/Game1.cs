@@ -63,6 +63,7 @@ namespace WandererWorld
             robotRenderSystem = new RobotRenderSystem();
 
             collisionSystem = new CollisionSystem();
+            houseSystem = new HouseSystem(this);
 
             base.Initialize();
         }
@@ -186,6 +187,7 @@ namespace WandererWorld
 
             heightMapRenderSystem.RenderHeightMapCamera();
             robotRenderSystem.RenderRobotCamera();
+            houseSystem.Update();
 
             base.Draw(gameTime);
         }
