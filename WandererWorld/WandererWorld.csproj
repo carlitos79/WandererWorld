@@ -45,6 +45,7 @@
     <Compile Include="Components\GenericComponent.cs" />
     <Compile Include="Components\HeightMapCameraComponent.cs" />
     <Compile Include="Components\HeightMapComponent.cs" />
+    <Compile Include="Components\HouseComponent.cs" />
     <Compile Include="Components\RobotComponent.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Manager\EntityComponentManager.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Systems\HeightMapRenderSystem.cs" />
     <Compile Include="Systems\HeightMapSystem.cs" />
     <Compile Include="Systems\HeightMapTranformSystem.cs" />
+    <Compile Include="Systems\HouseSystem.cs" />
     <Compile Include="Systems\RobotSystem.cs" />
   </ItemGroup>
   <ItemGroup>
