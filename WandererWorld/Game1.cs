@@ -17,12 +17,17 @@ namespace WandererWorld
 
         private HeightMapComponent heightMapComponent;
         private HeightMapCameraComponent heightMapCameraComponent;
+
         private RobotComponent robotComponent;
+        private RobotCameraComponent robotCameraComponent;
 
         private HeightmapSystem heightMapSystem;
         private HeightMapRenderSystem heightMapRenderSystem;
         private HeightMapTranformSystem heightMapTranformSystem;
+
         private RobotSystem robotSystem;
+        private RobotTranformSystem robotTranformSystem;
+        private RobotRenderSystem robotRenderSystem;
 
         private CollisionSystem collisionSystem;
 
@@ -45,12 +50,16 @@ namespace WandererWorld
         {
             heightMapComponent = new HeightMapComponent();
             heightMapCameraComponent = new HeightMapCameraComponent();
+
             robotComponent = new RobotComponent();
 
             heightMapSystem = new HeightmapSystem();
             heightMapRenderSystem = new HeightMapRenderSystem();
             heightMapTranformSystem = new HeightMapTranformSystem();
+
             robotSystem = new RobotSystem();
+            robotTranformSystem = new RobotTranformSystem();
+            robotRenderSystem = new RobotRenderSystem();
 
             collisionSystem = new CollisionSystem();
 
@@ -99,30 +108,35 @@ namespace WandererWorld
             heightMapSystem.CreateHeightMaps();
 
             robotComponent = new RobotComponent
-            {
-                MaxRotation = MathHelper.PiOver4,
-                Speed = 0,
-                RotationSpeed = 0.003f,
-                ModelRotation = 0,
-                Model = robotModel,
-                Texture = robotTexture,
-                Direction = true,
-                LeftArmMatrix = robotModel.Bones["LeftArm"].Transform,
-                RightArmMatrix = robotModel.Bones["RightArm"].Transform,
-                LeftLegMatrix = robotModel.Bones["LeftLeg"].Transform,
-                RightLegMatrix = robotModel.Bones["RightLeg"].Transform,
+            {                
+                Speed = 0,                
+                Texture = robotTexture,                
                 PlaneObjectWorld = Matrix.Identity,
                 TransformMatrices = new Matrix[robotModel.Bones.Count],
                 Effect = new BasicEffect(graphics.GraphicsDevice),
                 Scale = Matrix.CreateScale(0.5f),
-                Rotation = Quaternion.CreateFromAxisAngle(Vector3.Right, MathHelper.PiOver2) * Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.Pi),
                 Position = Vector3.Zero,
                 RobotProjection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, 1280 / 720, 0.1f, 500f),
                 RobotView = Matrix.CreateLookAt(new Vector3(70, 50, 30), new Vector3(0, 0, 20), Vector3.Backward)
             };
 
+            robotCameraComponent = new RobotCameraComponent
+            {
+                MaxRotation = MathHelper.PiOver4,
+                RotationSpeed = 0.003f,
+                ModelRotation = 0,
+                Model = robotModel,
+                Direction = true,
+                LeftArmMatrix = robotModel.Bones["LeftArm"].Transform,
+                RightArmMatrix = robotModel.Bones["RightArm"].Transform,
+                LeftLegMatrix = robotModel.Bones["LeftLeg"].Transform,
+                RightLegMatrix = robotModel.Bones["RightLeg"].Transform,
+                Rotation = Quaternion.CreateFromAxisAngle(Vector3.Right, MathHelper.PiOver2) * Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.Pi),
+            };
+
             int robotId = EntityComponentManager.GetManager().CreateNewEntityId();
             EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotComponent);
+            EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotCameraComponent);
             robotSystem.CreateRobots();
         }
 
@@ -145,8 +159,8 @@ namespace WandererWorld
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            heightMapTranformSystem.UpdateHeightMapCamera(gameTime);
-            robotSystem.Update(gameTime);
+            heightMapTranformSystem.RenderHeightMapCamera(gameTime);
+            robotTranformSystem.RenderRobotCamera(gameTime);
 
             base.Update(gameTime);
         }
@@ -158,8 +172,9 @@ namespace WandererWorld
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             heightMapRenderSystem.RenderHeightMapCamera();
-            robotSystem.Draw();
+            robotRenderSystem.RenderRobotCamera();
 
             base.Draw(gameTime);
         }

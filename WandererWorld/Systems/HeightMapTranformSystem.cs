@@ -7,47 +7,52 @@ namespace WandererWorld.Systems
 {
     public class HeightMapTranformSystem
     {
-        public void UpdateHeightMapCamera(GameTime gameTime)
+        public void RenderHeightMapCamera(GameTime gameTime)
         {
             var heightMapCameras = EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent));
+            var robotCameras = EntityComponentManager.GetManager().GetComponentByType(typeof(RobotCameraComponent));
 
-            foreach (var heightMapCamera in heightMapCameras)
+            foreach (var rc in robotCameras)
             {
-                var camera = (HeightMapCameraComponent)EntityComponentManager.GetManager().GetComponent(heightMapCamera.Key, typeof(HeightMapCameraComponent));
-
-                Vector3 tempMovement = Vector3.Zero;
-                Vector3 tempRotation = Vector3.Zero;
-
-                KeyboardState key = Keyboard.GetState();
-
-                //move backward
-                if (key.IsKeyDown(Keys.L))
+                foreach (var hmc in heightMapCameras)
                 {
-                    tempMovement.Z = -camera.Movement.Z;
-                }
-                //move forward
-                if (key.IsKeyDown(Keys.O))
-                {
-                    tempMovement.Z = +camera.Movement.Z;
-                }
-                //left rotation
-                if (key.IsKeyDown(Keys.Q))
-                {
-                    tempRotation.Y = -camera.Rotation.Y;
-                }
-                //right rotation
-                if (key.IsKeyDown(Keys.E))
-                {
-                    tempRotation.Y = +camera.Rotation.Y;
-                }
+                    var heightMapCamera = (HeightMapCameraComponent)EntityComponentManager.GetManager().GetComponent(hmc.Key, typeof(HeightMapCameraComponent));
+                    var robotCamera = (RobotCameraComponent)EntityComponentManager.GetManager().GetComponent(rc.Key, typeof(RobotCameraComponent));
 
-                //move camera to new position
-                camera.ViewMatrix = camera.ViewMatrix * Matrix.CreateRotationX(tempRotation.X) * Matrix.CreateRotationY(tempRotation.Y) * Matrix.CreateTranslation(tempMovement);
+                    Vector3 tempMovement = Vector3.Zero;
+                    Vector3 tempRotation = Vector3.Zero;
 
-                //update position
-                camera.Position += tempMovement;
-                camera.Direction += tempRotation;
-            }            
+                    KeyboardState key = Keyboard.GetState();
+
+                    //move backward
+                    if (robotCamera.Rotation.Z < 0 && key.IsKeyDown(Keys.Up))
+                    {
+                        tempMovement.Z = -heightMapCamera.Movement.Z;
+                    }
+                    //move forward
+                    if (robotCamera.Rotation.Z > 0 && key.IsKeyDown(Keys.Up))
+                    {
+                        tempMovement.Z = +heightMapCamera.Movement.Z;
+                    }
+                    //left rotation
+                    if (robotCamera.Rotation.X < 0 && key.IsKeyDown(Keys.Up))
+                    {
+                        tempRotation.Y = -heightMapCamera.Rotation.Y * 0.1f;
+                    }
+                    //right rotation
+                    if (robotCamera.Rotation.X > 0 && key.IsKeyDown(Keys.Up))
+                    {
+                        tempRotation.Y = +heightMapCamera.Rotation.Y * 0.1f;
+                    }
+
+                    //move camera to new position
+                    heightMapCamera.ViewMatrix = heightMapCamera.ViewMatrix * Matrix.CreateRotationX(tempRotation.X) * Matrix.CreateRotationY(tempRotation.Y) * Matrix.CreateTranslation(tempMovement);
+
+                    //update position
+                    heightMapCamera.Position += tempMovement;
+                    heightMapCamera.Direction += tempRotation;
+                }
+            }                
         }
     }
 }

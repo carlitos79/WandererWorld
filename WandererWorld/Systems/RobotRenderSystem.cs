@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using WandererWorld.Components;
 using WandererWorld.Manager;
 
 namespace WandererWorld.Systems
 {
-    public class RobotSystem
+    public class RobotRenderSystem
     {
-        public void CreateRobots()
+        public void RenderRobotCamera()
         {
             var robots = EntityComponentManager.GetManager().GetComponentByType(typeof(RobotComponent));
             var robotCams = EntityComponentManager.GetManager().GetComponentByType(typeof(RobotCameraComponent));
@@ -18,18 +19,22 @@ namespace WandererWorld.Systems
                     var robot = (RobotComponent)EntityComponentManager.GetManager().GetComponent(r.Key, typeof(RobotComponent));
                     var robotCam = (RobotCameraComponent)EntityComponentManager.GetManager().GetComponent(r.Key, typeof(RobotCameraComponent));
 
-                    robot.Effect.Projection = robot.RobotProjection;
-                    robot.Effect.View = robot.RobotView;
-
-                    robot.Effect.VertexColorEnabled = false;
                     robot.Effect.TextureEnabled = true;
-                    robot.Effect.EnableDefaultLighting();
-                    robot.Effect.LightingEnabled = false;
+                    robot.Effect.Texture = robot.Texture;
+
+                    robotCam.Model.CopyAbsoluteBoneTransformsTo(robot.TransformMatrices);
+
+                    robot.PlaneObjectWorld = Matrix.Identity * robot.Scale * Matrix.CreateFromQuaternion(robotCam.Rotation) * Matrix.CreateTranslation(robot.Position);
 
                     foreach (ModelMesh mesh in robotCam.Model.Meshes)
                     {
-                        foreach (ModelMeshPart mp in mesh.MeshParts)
-                            mp.Effect = robot.Effect;
+                        robot.Effect.World = robot.TransformMatrices[mesh.ParentBone.Index] * robot.PlaneObjectWorld * Matrix.Identity;
+
+                        foreach (Effect e in mesh.Effects)
+                        {
+                            e.CurrentTechnique.Passes[0].Apply();
+                        }
+                        mesh.Draw();
                     }
                 }
             }            
