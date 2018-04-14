@@ -77,8 +77,9 @@ namespace WandererWorld
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Texture2D heightMapTexture2D = Content.Load<Texture2D>("US_Canyon");
-            Texture2D heightMapGrassTexture = Content.Load<Texture2D>("grass");
+            Texture2D heightMapGrassTexture = Content.Load<Texture2D>("grass2");
             Texture2D heightMapFireTexture = Content.Load<Texture2D>("fire");
+            Texture2D BrickTexture = Content.Load<Texture2D>("brick");
             Model robotModel = Content.Load<Model>("Lab2Model");
             Texture2D robotTexture = Content.Load<Texture2D>("robot_texture");
 
@@ -104,8 +105,8 @@ namespace WandererWorld
                 TerrainPosition = new Vector3(0, -100, 256),
             };
 
-            var h1 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(400, 55, -100), Matrix.Identity, heightMapFireTexture);
-            var h2 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(350, 55, -200), Matrix.Identity, heightMapFireTexture);
+            var h1 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(400, 55, -100), Matrix.Identity, BrickTexture);
+            var h2 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(350, 55, -200), Matrix.Identity, BrickTexture);
 
             int heightMapId = EntityComponentManager.GetManager().CreateNewEntityId();
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapComponent);
