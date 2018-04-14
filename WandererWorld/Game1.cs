@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using WandererWorld.Components;
 using WandererWorld.Manager;
-using WandererWorld.System;
+using WandererWorld.Systems;
 
 namespace WandererWorld
 {
@@ -17,10 +17,14 @@ namespace WandererWorld
 
         private HeightMapComponent heightMapComponent;
         private HeightMapCameraComponent heightMapCameraComponent;
+        private RobotComponent robotComponent;
 
         private HeightmapSystem heightMapSystem;
         private HeightMapRenderSystem heightMapRenderSystem;
         private HeightMapTranformSystem heightMapTranformSystem;
+        private RobotSystem robotSystem;
+
+        private CollisionSystem collisionSystem;
 
         public Game1()
         {
@@ -41,10 +45,14 @@ namespace WandererWorld
         {
             heightMapComponent = new HeightMapComponent();
             heightMapCameraComponent = new HeightMapCameraComponent();
+            robotComponent = new RobotComponent();
 
             heightMapSystem = new HeightmapSystem();
             heightMapRenderSystem = new HeightMapRenderSystem();
             heightMapTranformSystem = new HeightMapTranformSystem();
+            robotSystem = new RobotSystem();
+
+            collisionSystem = new CollisionSystem();
 
             base.Initialize();
         }
@@ -60,6 +68,8 @@ namespace WandererWorld
             Texture2D heightMapTexture2D = Content.Load<Texture2D>("US_Canyon");
             Texture2D heightMapGrassTexture = Content.Load<Texture2D>("grass");
             Texture2D heightMapFireTexture = Content.Load<Texture2D>("fire");
+            Model robotModel = Content.Load<Model>("Lab2Model");
+            Texture2D robotTexture = Content.Load<Texture2D>("robot_texture");
 
             heightMapComponent = new HeightMapComponent
             {
@@ -74,7 +84,7 @@ namespace WandererWorld
             heightMapCameraComponent = new HeightMapCameraComponent()
             {
                 ViewMatrix = Matrix.CreateLookAt(new Vector3(-100, 0, 0), Vector3.Zero, Vector3.Up),
-                ProjectionMatrix = Matrix.CreatePerspective(1.2f, 0.9f, 1.0f, 1500.0f),
+                ProjectionMatrix = Matrix.CreatePerspective(1.2f, 0.9f, 1.0f, 1000.0f),
                 TerrainMatrix = Matrix.CreateTranslation(new Vector3(0, -100, 256)),
                 Position = new Vector3(-100, 0, 0),
                 Direction = Vector3.Zero,
@@ -87,6 +97,33 @@ namespace WandererWorld
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapComponent);
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapCameraComponent);
             heightMapSystem.CreateHeightMaps();
+
+            robotComponent = new RobotComponent
+            {
+                MaxRotation = MathHelper.PiOver4,
+                Speed = 0,
+                RotationSpeed = 0.003f,
+                ModelRotation = 0,
+                Model = robotModel,
+                Texture = robotTexture,
+                Direction = true,
+                LeftArmMatrix = robotModel.Bones["LeftArm"].Transform,
+                RightArmMatrix = robotModel.Bones["RightArm"].Transform,
+                LeftLegMatrix = robotModel.Bones["LeftLeg"].Transform,
+                RightLegMatrix = robotModel.Bones["RightLeg"].Transform,
+                PlaneObjectWorld = Matrix.Identity,
+                TransformMatrices = new Matrix[robotModel.Bones.Count],
+                Effect = new BasicEffect(graphics.GraphicsDevice),
+                Scale = Matrix.CreateScale(0.5f),
+                Rotation = Quaternion.CreateFromAxisAngle(Vector3.Right, MathHelper.PiOver2) * Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.Pi),
+                Position = Vector3.Zero,
+                RobotProjection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, 1280 / 720, 0.1f, 500f),
+                RobotView = Matrix.CreateLookAt(new Vector3(70, 50, 30), new Vector3(0, 0, 20), Vector3.Backward)
+            };
+
+            int robotId = EntityComponentManager.GetManager().CreateNewEntityId();
+            EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotComponent);
+            robotSystem.CreateRobots();
         }
 
         /// <summary>
@@ -109,6 +146,7 @@ namespace WandererWorld
                 Exit();
 
             heightMapTranformSystem.UpdateHeightMapCamera(gameTime);
+            robotSystem.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -121,6 +159,7 @@ namespace WandererWorld
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             heightMapRenderSystem.RenderHeightMapCamera();
+            robotSystem.Draw();
 
             base.Draw(gameTime);
         }

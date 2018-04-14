@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using WandererWorld.Components;
 using WandererWorld.Manager;
 
-namespace WandererWorld.System
+namespace WandererWorld.Systems
 {
     public class HeightMapTranformSystem
     {

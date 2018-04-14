@@ -41,16 +41,20 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\CollisionComponent.cs" />
     <Compile Include="Components\GenericComponent.cs" />
     <Compile Include="Components\HeightMapCameraComponent.cs" />
     <Compile Include="Components\HeightMapComponent.cs" />
+    <Compile Include="Components\RobotComponent.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Manager\EntityComponentManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\HeightMapRenderSystem.cs" />
-    <Compile Include="System\HeightMapSystem.cs" />
-    <Compile Include="System\HeightMapTranformSystem.cs" />
+    <Compile Include="Systems\CollisionSystem.cs" />
+    <Compile Include="Systems\HeightMapRenderSystem.cs" />
+    <Compile Include="Systems\HeightMapSystem.cs" />
+    <Compile Include="Systems\HeightMapTranformSystem.cs" />
+    <Compile Include="Systems\RobotSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

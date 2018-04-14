@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using WandererWorld.Components;
 using WandererWorld.Manager;
 
-namespace WandererWorld.System
+namespace WandererWorld.Systems
 {
     public class HeightmapSystem
     {
@@ -19,6 +19,7 @@ namespace WandererWorld.System
                 SetHeights(hm);
                 SetVertices(hm);
                 SetIndices(hm);
+                CalculateNormals(hm);
                 SetEffects(hm);
             }
         }
@@ -59,25 +60,50 @@ namespace WandererWorld.System
                 }
         }
 
+        private void CalculateNormals(HeightMapComponent heightmap)
+        {
+            for (int i = 0; i < heightmap.Vertices.Length; i++)
+                heightmap.Vertices[i].Normal = new Vector3(0, 0, 0);
+
+            for (int i = 0; i < heightmap.Indices.Length / 3; i++)
+            {
+                int index1 = heightmap.Indices[i * 3];
+                int index2 = heightmap.Indices[i * 3 + 1];
+                int index3 = heightmap.Indices[i * 3 + 2];
+
+                Vector3 side1 = heightmap.Vertices[index1].Position - heightmap.Vertices[index3].Position;
+                Vector3 side2 = heightmap.Vertices[index1].Position - heightmap.Vertices[index2].Position;
+                Vector3 normal = Vector3.Cross(side1, side2);
+
+                heightmap.Vertices[index1].Normal += normal;
+                heightmap.Vertices[index2].Normal += normal;
+                heightmap.Vertices[index3].Normal += normal;
+            }
+
+            for (int i = 0; i < heightmap.Vertices.Length; i++)
+                heightmap.Vertices[i].Normal.Normalize();
+        }
+
         public void SetVertices(HeightMapComponent heightmap)
         {
-            heightmap.Vertices = new VertexPositionTexture[heightmap.Width * heightmap.Height];
+            heightmap.Vertices = new VertexPositionNormalTexture[heightmap.Width * heightmap.Height];
 
             for (int x = 0; x < heightmap.Width; x++)
             {
                 for (int y = 0; y < heightmap.Height; y++)
                 {
                     heightmap.TexturePosition = new Vector2((float)x / 150.5f, (float)y / 150.5f);
-                    heightmap.Vertices[x + y * heightmap.Width] = new VertexPositionTexture(new Vector3(x, heightmap.HeightMapData[x, y], -y), heightmap.TexturePosition);                   
+                    heightmap.Vertices[x + y * heightmap.Width] = new VertexPositionNormalTexture(new Vector3(x, heightmap.HeightMapData[x, y], -y), Vector3.Zero, heightmap.TexturePosition);
                 }
             }
         }
+
 
         public void SetEffects(HeightMapComponent heightmap)
         {
             heightmap.BasicEffect = new BasicEffect(heightmap.GraphicsDevice);            
             heightmap.BasicEffect.TextureEnabled = true;
-            heightmap.BasicEffect.Texture = heightmap.HeightMapTexture;            
+            heightmap.BasicEffect.Texture = heightmap.HeightMapTexture;
         }
     }
 }
