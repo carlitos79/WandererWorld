@@ -150,6 +150,7 @@ namespace WandererWorld
                 LeftLegMatrix = robotModel.Bones["LeftLeg"].Transform,
                 RightLegMatrix = robotModel.Bones["RightLeg"].Transform,
                 Rotation = Quaternion.CreateFromAxisAngle(Vector3.Right, MathHelper.PiOver2) * Quaternion.CreateFromAxisAngle(Vector3.Up, MathHelper.Pi),
+                RotationInDegrees = 0
             };
 
             int robotId = EntityComponentManager.GetManager().CreateNewEntityId();

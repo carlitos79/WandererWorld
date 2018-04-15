@@ -15,5 +15,6 @@ namespace WandererWorld.Components
         public Matrix RightArmMatrix { get; set; }
         public Matrix RightLegMatrix { get; set; }
         public Quaternion Rotation { get; set; }
+        public int RotationInDegrees { get; set; }
     }
 }

@@ -46,18 +46,24 @@ namespace WandererWorld.Systems
                     robot.Model.Bones["LeftArm"].Transform = TransformPart(robot.LeftArmMatrix, -robot.ModelRotation);
                     robot.Model.Bones["RightLeg"].Transform = TransformPart(robot.RightLegMatrix, -robot.ModelRotation);
                     robot.Model.Bones["LeftLeg"].Transform = TransformPart(robot.LeftLegMatrix, robot.ModelRotation);
-                }
+                }                
+
                 if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 {
                     rotation = 0.01f * MathHelper.PiOver4 * (float)gameTime.ElapsedGameTime.Milliseconds;
+                    robot.RotationInDegrees = (int)(0.01f * MathHelper.PiOver4 * (float)gameTime.ElapsedGameTime.Milliseconds);
                 }
                 if (Keyboard.GetState().IsKeyDown(Keys.Right))
                 {
                     rotation = -0.01f * MathHelper.PiOver4 * (float)gameTime.ElapsedGameTime.Milliseconds;
+                    robot.RotationInDegrees = (int)(-0.01f * MathHelper.PiOver4 * (float)gameTime.ElapsedGameTime.Milliseconds);
                 }
 
+                rotation = rotation % 360;
+                robot.RotationInDegrees = robot.RotationInDegrees % 360;
+
                 robot.Rotation *= Quaternion.CreateFromYawPitchRoll(rotation, 0, 0);
-                //Debug.WriteLine(robot.Rotation);
+                //Debug.WriteLine(robot.RotationInDegrees);
 
             }
         }

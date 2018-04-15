@@ -26,22 +26,22 @@ namespace WandererWorld.Systems
                     KeyboardState key = Keyboard.GetState();
 
                     //move backward
-                    if (robotCamera.Rotation.Z < 0 && key.IsKeyDown(Keys.Up))
+                    if (robotCamera.Rotation.Z > robotCamera.RotationInDegrees && key.IsKeyDown(Keys.Up))
                     {
                         tempMovement.Z = -heightMapCamera.Movement.Z;
                     }
                     //move forward
-                    if (robotCamera.Rotation.Z > 0 && key.IsKeyDown(Keys.Up))
+                    if (robotCamera.Rotation.Z < robotCamera.RotationInDegrees && key.IsKeyDown(Keys.Up))
                     {
                         tempMovement.Z = +heightMapCamera.Movement.Z;
                     }
                     //left rotation
-                    if (robotCamera.Rotation.X < 0 && key.IsKeyDown(Keys.Up))
+                    if (robotCamera.Rotation.X > robotCamera.RotationInDegrees && key.IsKeyDown(Keys.Up))
                     {
                         tempRotation.Y = -heightMapCamera.Rotation.Y * 0.1f;
                     }
                     //right rotation
-                    if (robotCamera.Rotation.X > 0 && key.IsKeyDown(Keys.Up))
+                    if (robotCamera.Rotation.X < robotCamera.RotationInDegrees && key.IsKeyDown(Keys.Up))
                     {
                         tempRotation.Y = +heightMapCamera.Rotation.Y * 0.1f;
                     }
