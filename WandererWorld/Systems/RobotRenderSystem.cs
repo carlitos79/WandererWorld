@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using WandererWorld.Components;
+using WandererWorld.Interfaces;
 using WandererWorld.Manager;
 
 namespace WandererWorld.Systems
 {
-    public class RobotRenderSystem
+    public class RobotRenderSystem : IRenderSystem
     {
-        public void RenderRobotCamera()
+        public void RenderSystem()
         {
             var robots = EntityComponentManager.GetManager().GetComponentByType(typeof(RobotComponent));
             var robotCams = EntityComponentManager.GetManager().GetComponentByType(typeof(RobotCameraComponent));

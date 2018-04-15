@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using WandererWorld.Components;
+using WandererWorld.Interfaces;
 using WandererWorld.Manager;
 
 namespace WandererWorld.Systems
 {
-    public class RobotTranformSystem
+    public class RobotTranformSystem : IUpdateSystem
     {
-        public void RenderRobotCamera(GameTime gameTime)
+        public void UpdateSystem(GameTime gameTime)
         {
             float rotation = 0;
             float speed = 0;

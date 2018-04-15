@@ -49,11 +49,14 @@
     <Compile Include="Components\HouseComponent.cs" />
     <Compile Include="Components\RobotComponent.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Interfaces\IRenderSystem.cs" />
+    <Compile Include="Interfaces\IUpdateSystem.cs" />
+    <Compile Include="Interfaces\Renderer.cs" />
+    <Compile Include="Interfaces\Updater.cs" />
     <Compile Include="Manager\EntityComponentManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Systems\CollisionSystem.cs" />
-    <Compile Include="Systems\GenericUpdateSystem.cs" />
     <Compile Include="Systems\HeightMapRenderSystem.cs" />
     <Compile Include="Systems\HeightMapSystem.cs" />
     <Compile Include="Systems\HeightMapTranformSystem.cs" />

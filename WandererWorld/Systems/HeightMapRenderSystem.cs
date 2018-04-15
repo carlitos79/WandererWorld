@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using WandererWorld.Components;
+using WandererWorld.Interfaces;
 using WandererWorld.Manager;
 
 namespace WandererWorld.Systems
 {
-    public class HeightMapRenderSystem
+    public class HeightMapRenderSystem : IRenderSystem
     {
-        public void RenderHeightMapCamera()
+        public void RenderSystem()
         {
             var heightMapCameras = EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent));
             var heightMaps = EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent));

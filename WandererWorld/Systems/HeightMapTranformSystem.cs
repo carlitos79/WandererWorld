@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using WandererWorld.Components;
+using WandererWorld.Interfaces;
 using WandererWorld.Manager;
 
 namespace WandererWorld.Systems
 {
-    public class HeightMapTranformSystem
+    public class HeightMapTranformSystem : IUpdateSystem
     {
-        public void RenderHeightMapCamera(GameTime gameTime)
+        public void UpdateSystem(GameTime gameTime)
         {
             var heightMapCameras = EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent));
             var robotCameras = EntityComponentManager.GetManager().GetComponentByType(typeof(RobotCameraComponent));

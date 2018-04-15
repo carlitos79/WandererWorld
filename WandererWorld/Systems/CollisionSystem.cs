@@ -54,9 +54,8 @@ namespace WandererWorld.Systems
         public bool CheckIfCollision(CollisionComponent a, CollisionComponent b)
         {
             if (a.BBox.Intersects(b.BBox))
-            {
                 return true;
-            }
+            else
             return false;
         }
     }

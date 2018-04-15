@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using WandererWorld.Components;
+using WandererWorld.Interfaces;
 using WandererWorld.Manager;
 using WandererWorld.Systems;
 
@@ -21,16 +22,19 @@ namespace WandererWorld
         private RobotComponent robotComponent;
         private RobotCameraComponent robotCameraComponent;
 
-        private HeightmapSystem heightMapSystem;
-        private HeightMapRenderSystem heightMapRenderSystem;
-        private HeightMapTranformSystem heightMapTranformSystem;
+        private HeightmapSystem heightMapSystem;        
+        private IUpdateSystem heightMapTranformSystem;
+        private IRenderSystem heightMapRenderSystem;
 
         private RobotSystem robotSystem;
-        private RobotTranformSystem robotTranformSystem;
-        private RobotRenderSystem robotRenderSystem;
+        private IUpdateSystem robotTranformSystem;
+        private IRenderSystem robotRenderSystem;
 
         private CollisionSystem collisionSystem;
         private HouseSystem houseSystem;
+        
+        private Updater systemsUpdater;
+        private Renderer systemRenderer;
 
         public Game1()
         {
@@ -55,8 +59,8 @@ namespace WandererWorld
             robotComponent = new RobotComponent();
 
             heightMapSystem = new HeightmapSystem();
-            heightMapRenderSystem = new HeightMapRenderSystem();
             heightMapTranformSystem = new HeightMapTranformSystem();
+            heightMapRenderSystem = new HeightMapRenderSystem();                   
 
             robotSystem = new RobotSystem();
             robotTranformSystem = new RobotTranformSystem();
@@ -64,6 +68,8 @@ namespace WandererWorld
 
             collisionSystem = new CollisionSystem();
             houseSystem = new HouseSystem(this);
+
+            systemRenderer = new Renderer();
 
             base.Initialize();
         }
@@ -168,11 +174,12 @@ namespace WandererWorld
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            systemsUpdater = new Updater(gameTime);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            heightMapTranformSystem.RenderHeightMapCamera(gameTime);
-            robotTranformSystem.RenderRobotCamera(gameTime);
+            systemsUpdater.Update(heightMapTranformSystem, robotTranformSystem);
 
             base.Update(gameTime);
         }
@@ -182,12 +189,10 @@ namespace WandererWorld
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
-        {
-            
+        {            
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            heightMapRenderSystem.RenderHeightMapCamera();
-            robotRenderSystem.RenderRobotCamera();
+            systemRenderer.Render(heightMapRenderSystem, robotRenderSystem);
             houseSystem.Update();
 
             base.Draw(gameTime);
