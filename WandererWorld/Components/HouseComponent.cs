@@ -13,13 +13,17 @@ namespace WandererWorld.Components
         public Vector3 Scale { get; set; }
         public Vector3 Position { get; set; }
         public Matrix Rotation { get; set; }
-        public Texture2D Texture { get; set; }
-        public VertexPositionNormalTexture[] Vertices { get; set; }
-        public short[] Indices { get; private set; }
+        public Texture2D WallTexture { get; set; }
+        public Texture2D RoofTexture { get; set; }
+        public VertexPositionNormalTexture[] WallVertices { get; set; }
+        public VertexPositionNormalTexture[] RoofVertices { get; set; }
+        public short[] WallIndices { get; private set; }
+        public short[] RoofIndices { get; private set; }
 
-        public VertexBuffer VertexBuffer { get; private set; }
-        
-        public IndexBuffer IndexBuffer { get; private set; }
+        public VertexBuffer WallVertexBuffer { get; private set; }
+        public IndexBuffer WallIndexBuffer { get; private set; }
+        public VertexBuffer RoofVertexBuffer { get; private set; }
+        public IndexBuffer RoofIndexBuffer { get; private set; }
 
         // Vertex positions for box
         private static readonly Vector3 FRONT_TOP_LEFT = new Vector3(-0.5f, 0.5f, 0.5f);
@@ -32,109 +36,114 @@ namespace WandererWorld.Components
         private static readonly Vector3 BACK_BOTTOM_RIGHT = new Vector3(0.5f, -0.5f, -0.5f);
 
         // Vertex positions for roof
-        private static readonly Vector3 ROOF_LEFT = new Vector3(-0.5f, 1f, 0f);
-        private static readonly Vector3 ROOF_RIGHT = new Vector3(0.5f, 1f, 0f);
+        private static readonly Vector3 ROOF_LEFT = new Vector3(-0.5f, 0.85f, 0f);
+        private static readonly Vector3 ROOF_RIGHT = new Vector3(0.5f, 0.85f, 0f);
 
-        public HouseComponent(Vector3 scale, Vector3 pos, Matrix rot, Texture2D tex)
+        public HouseComponent(Vector3 scale, Vector3 pos, Matrix rot, Texture2D wall, Texture2D roof)
         {
             Scale = scale;
             Position = pos;
             Rotation = rot;
-            Texture = tex;
+            WallTexture = wall;
+            RoofTexture = roof;
             SetUpVertices();
             SetUpIndices();
         }
 
         private void SetUpVertices()
         {
-            List<VertexPositionNormalTexture> vertexList = new List<VertexPositionNormalTexture>(36);
+            List<VertexPositionNormalTexture> wallVertexList = new List<VertexPositionNormalTexture>(36);
+            List<VertexPositionNormalTexture> roofVertexList = new List<VertexPositionNormalTexture>(18);
 
             // Front face
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Forward, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Forward, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Forward, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Forward, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Forward, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Forward, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Forward, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Forward, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Forward, new Vector2(0, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Forward, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Forward, new Vector2(1, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Forward, new Vector2(1, 0)));
 
             // Top face
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Up, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Up, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Up, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Up, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Up, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Up, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Up, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Up, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Up, new Vector2(0, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Up, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Up, new Vector2(1, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Up, new Vector2(1, 0)));
 
             // Right face
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Right, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Right, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Right, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Right, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Right, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Right, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Right, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Right, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Right, new Vector2(0, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Right, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Right, new Vector2(1, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Right, new Vector2(1, 0)));
 
             // Bottom face
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Down, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Down, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Down, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Down, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Down, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Down, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Down, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Down, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Down, new Vector2(0, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Down, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_RIGHT, Vector3.Down, new Vector2(1, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Down, new Vector2(1, 0)));
 
             // Left face
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Left, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Left, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Left, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Left, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Left, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Left, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Left, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Left, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Left, new Vector2(0, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Left, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Left, new Vector2(1, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(FRONT_BOTTOM_LEFT, Vector3.Left, new Vector2(1, 0)));
 
             // Back face
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Backward, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Backward, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Backward, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Backward, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Backward, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Backward, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Backward, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Backward, new Vector2(1, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_RIGHT, Vector3.Backward, new Vector2(0, 0)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Backward, new Vector2(0, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Backward, new Vector2(1, 1)));
+            wallVertexList.Add(new VertexPositionNormalTexture(BACK_BOTTOM_LEFT, Vector3.Backward, new Vector2(1, 0)));
 
             // Roof front face
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Forward, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Forward, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Forward + Vector3.Up, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Forward, new Vector2(1, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Forward, new Vector2(1, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Forward, new Vector2(0, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Forward + Vector3.Up, new Vector2(1, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Forward, new Vector2(1, 0)));
 
             // Roof back face
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Forward, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Forward, new Vector2(0, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Forward + Vector3.Up, new Vector2(1, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Forward, new Vector2(1, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Forward, new Vector2(1, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Forward, new Vector2(0, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Forward + Vector3.Up, new Vector2(0, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Forward + Vector3.Up, new Vector2(1, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Forward, new Vector2(1, 0)));
 
             // Roof left face
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Left, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Left, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Left, new Vector2(0, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_LEFT, Vector3.Left, new Vector2(0, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_LEFT, Vector3.Left, new Vector2(1, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_LEFT, Vector3.Left, new Vector2(0, 0)));
 
             // Roof right face
-            vertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Right, new Vector2(0, 1)));
-            vertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Right, new Vector2(1, 0)));
-            vertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Right, new Vector2(0, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(ROOF_RIGHT, Vector3.Right, new Vector2(0, 1)));
+            roofVertexList.Add(new VertexPositionNormalTexture(BACK_TOP_RIGHT, Vector3.Right, new Vector2(1, 0)));
+            roofVertexList.Add(new VertexPositionNormalTexture(FRONT_TOP_RIGHT, Vector3.Right, new Vector2(0, 0)));
 
-
-            Vertices = vertexList.ToArray();
+            WallVertices = wallVertexList.ToArray();
+            RoofVertices = roofVertexList.ToArray();
         }
 
         private void SetUpIndices()
         {
-            List<short> indexList = new List<short>(54);
-
+            List<short> wallIndices = new List<short>(36);
             for (short i = 0; i < 54; ++i)
-                indexList.Add(i);
+                wallIndices.Add(i);
+            WallIndices = wallIndices.ToArray();
 
-            Indices = indexList.ToArray();
+            List<short> roofIndices = new List<short>(36);
+            for (short i = 0; i < 18; ++i)
+                roofIndices.Add(i);
+            RoofIndices = roofIndices.ToArray();
         }
     }
 }

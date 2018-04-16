@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Diagnostics;
 using WandererWorld.Components;
 using WandererWorld.Interfaces;
@@ -16,6 +17,8 @@ namespace WandererWorld
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        private Random rnd = new Random();
 
         private HeightMapComponent heightMapComponent;
         private HeightMapCameraComponent heightMapCameraComponent;
@@ -89,6 +92,7 @@ namespace WandererWorld
             Texture2D BrickTexture = Content.Load<Texture2D>("brick");
             Model robotModel = Content.Load<Model>("Lab2Model");
             Texture2D robotTexture = Content.Load<Texture2D>("robot_texture");
+            Texture2D roofTexture = Content.Load<Texture2D>("roof");
 
             heightMapComponent = new HeightMapComponent
             {
@@ -112,18 +116,25 @@ namespace WandererWorld
                 TerrainPosition = new Vector3(0, -100, 256),
             };
 
-            var h1 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(50, 30, -50), Matrix.Identity, BrickTexture);
-            var h2 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(1000, 55, -50), Matrix.Identity, BrickTexture);
+            //var h1 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(100, 50, -100), Matrix.Identity, BrickTexture, roofTexture);
+            //var h2 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(950, 50, -100), Matrix.Identity, BrickTexture, roofTexture);
+            //var h3 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(950, 50, -900), Matrix.Identity, BrickTexture, roofTexture);
+
+            //int h1Id = EntityComponentManager.GetManager().CreateNewEntityId();
+            //EntityComponentManager.GetManager().AddComponentToEntity(h1Id, h1);
+
+            //int h2Id = EntityComponentManager.GetManager().CreateNewEntityId();
+            //EntityComponentManager.GetManager().AddComponentToEntity(h2Id, h2);
+
+            //int h3Id = EntityComponentManager.GetManager().CreateNewEntityId();
+            //EntityComponentManager.GetManager().AddComponentToEntity(h3Id, h3);
 
             int heightMapId = EntityComponentManager.GetManager().CreateNewEntityId();
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapComponent);
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapCameraComponent);
 
-            int h1Id = EntityComponentManager.GetManager().CreateNewEntityId();
-            EntityComponentManager.GetManager().AddComponentToEntity(h1Id, h1);
+            CreateRandomHouses(10, BrickTexture, roofTexture);
 
-            int h2Id = EntityComponentManager.GetManager().CreateNewEntityId();
-            EntityComponentManager.GetManager().AddComponentToEntity(h2Id, h2);
             heightMapSystem.CreateHeightMaps();
 
             robotComponent = new RobotComponent
@@ -158,6 +169,30 @@ namespace WandererWorld
             EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotComponent);
             EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotCameraComponent);
             robotSystem.CreateRobots();
+        }
+
+        private void CreateRandomHouses(int nHouses, Texture2D wall, Texture2D roof)
+        {
+            // Max and min values
+            short minWidth = 30;
+            short maxWidth = 100;
+            short minHeight = 100;
+            short maxHeight = 180;
+
+            short minX = 100;
+            short maxX = 950;
+            short minZ = -900;
+            short maxZ = -100;
+
+            for(int i = 0; i < nHouses; ++i)
+            {
+                Vector3 scale = new Vector3(rnd.Next(minWidth, maxWidth), rnd.Next(minHeight, maxHeight), rnd.Next(minWidth, minHeight));
+                Vector3 pos = new Vector3(rnd.Next(minX, maxX), scale.Y / 2, rnd.Next(minZ, maxZ));
+                HouseComponent house = new HouseComponent(scale, pos, Matrix.CreateRotationY((float)rnd.NextDouble()), wall, roof);
+
+                int hid = EntityComponentManager.GetManager().CreateNewEntityId();
+                EntityComponentManager.GetManager().AddComponentToEntity(hid, house);
+            }
         }
 
         /// <summary>

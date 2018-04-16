@@ -24,19 +24,31 @@ namespace WandererWorld.Systems
             var d = EntityComponentManager.GetManager().GetComponentByType(typeof(HouseComponent));
             foreach(var i in d.Values)
             {
+                // Render the walls with one texture...
                 var vertexBuffer = new VertexBuffer(
                     game.GraphicsDevice, 
                     typeof(VertexPositionNormalTexture), 
-                    ((HouseComponent)i).Vertices.Length, 
+                    ((HouseComponent)i).WallVertices.Length, 
                     BufferUsage.None);
-                vertexBuffer.SetData(((HouseComponent)i).Vertices);
-                var indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), ((HouseComponent)i).Indices.Length, BufferUsage.None);
-                indexBuffer.SetData(((HouseComponent)i).Indices);
-                RenderHouses((HouseComponent)i, vertexBuffer, indexBuffer);
+                vertexBuffer.SetData(((HouseComponent)i).WallVertices);
+                var indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), ((HouseComponent)i).WallIndices.Length, BufferUsage.None);
+                indexBuffer.SetData(((HouseComponent)i).WallIndices);
+                RenderHouses((HouseComponent)i, vertexBuffer, indexBuffer, ((HouseComponent)i).WallTexture);
+
+                // ...Render the roof with another texture
+                vertexBuffer = new VertexBuffer(
+                    game.GraphicsDevice,
+                    typeof(VertexPositionNormalTexture),
+                    ((HouseComponent)i).RoofVertices.Length,
+                    BufferUsage.None);
+                vertexBuffer.SetData(((HouseComponent)i).RoofVertices);
+                indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), ((HouseComponent)i).RoofIndices.Length, BufferUsage.None);
+                indexBuffer.SetData(((HouseComponent)i).WallIndices);
+                RenderHouses((HouseComponent)i, vertexBuffer, indexBuffer, ((HouseComponent)i).RoofTexture);
             }
         }
 
-        private void RenderHouses(HouseComponent h, VertexBuffer vb, IndexBuffer ib)
+        private void RenderHouses(HouseComponent h, VertexBuffer vb, IndexBuffer ib, Texture2D texture)
         {
             game.GraphicsDevice.SetVertexBuffer(vb);
             game.GraphicsDevice.Indices = ib;
@@ -50,7 +62,7 @@ namespace WandererWorld.Systems
             effect.LightingEnabled = false;
             var objectWorld = Matrix.CreateScale(h.Scale) * h.Rotation * Matrix.CreateTranslation(h.Position);
             effect.World = objectWorld * ((HeightMapCameraComponent)EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent)).First().Value).TerrainMatrix;
-            effect.Texture = h.Texture;
+            effect.Texture = texture;
 
             foreach (EffectPass ep in effect.CurrentTechnique.Passes)
             {
