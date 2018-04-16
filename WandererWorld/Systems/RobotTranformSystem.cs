@@ -64,7 +64,6 @@ namespace WandererWorld.Systems
 
                 robot.Rotation *= Quaternion.CreateFromYawPitchRoll(rotation, 0, 0);
                 //Debug.WriteLine(robot.RotationInDegrees);
-
             }
         }
 

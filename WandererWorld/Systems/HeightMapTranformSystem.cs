@@ -42,7 +42,7 @@ namespace WandererWorld.Systems
                     }
                     //right rotation
                     if (robotCamera.Rotation.X < robotCamera.RotationInDegrees && key.IsKeyDown(Keys.Up))
-                    {
+                    {                        
                         tempRotation.Y = +heightMapCamera.Rotation.Y * 0.1f;
                     }
 

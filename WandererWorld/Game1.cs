@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 using WandererWorld.Components;
 using WandererWorld.Interfaces;
 using WandererWorld.Manager;
@@ -111,8 +112,8 @@ namespace WandererWorld
                 TerrainPosition = new Vector3(0, -100, 256),
             };
 
-            var h1 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(400, 55, -100), Matrix.Identity, BrickTexture);
-            var h2 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(350, 55, -200), Matrix.Identity, BrickTexture);
+            var h1 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(50, 30, -50), Matrix.Identity, BrickTexture);
+            var h2 = new HouseComponent(new Vector3(40, 40, 40), new Vector3(1000, 55, -50), Matrix.Identity, BrickTexture);
 
             int heightMapId = EntityComponentManager.GetManager().CreateNewEntityId();
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapComponent);
@@ -181,6 +182,9 @@ namespace WandererWorld
                 Exit();
 
             systemsUpdater.Update(heightMapTranformSystem, robotTranformSystem);
+
+            //Debug.WriteLine("Width: " + heightMapComponent.Width);
+            //Debug.WriteLine("Height: " + heightMapComponent.Height);
 
             base.Update(gameTime);
         }
