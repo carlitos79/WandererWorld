@@ -89,10 +89,12 @@ namespace WandererWorld
             Texture2D heightMapTexture2D = Content.Load<Texture2D>("US_Canyon");
             Texture2D heightMapGrassTexture = Content.Load<Texture2D>("grass2");
             Texture2D heightMapFireTexture = Content.Load<Texture2D>("fire");
-            Texture2D BrickTexture = Content.Load<Texture2D>("brick");
+            Texture2D BrickTexture = Content.Load<Texture2D>("wall_texture");
             Model robotModel = Content.Load<Model>("Lab2Model");
             Texture2D robotTexture = Content.Load<Texture2D>("robot_texture");
             Texture2D roofTexture = Content.Load<Texture2D>("roof");
+            Texture2D timberWallTexture = Content.Load<Texture2D>("timber_wall");
+            Texture2D timberRoofTexture = Content.Load<Texture2D>("timber_roof");
 
             heightMapComponent = new HeightMapComponent
             {
@@ -133,7 +135,7 @@ namespace WandererWorld
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapComponent);
             EntityComponentManager.GetManager().AddComponentToEntity(heightMapId, heightMapCameraComponent);
 
-            CreateRandomHouses(10, BrickTexture, roofTexture);
+            CreateRandomHouses(10, BrickTexture, roofTexture, timberWallTexture, timberRoofTexture);
 
             heightMapSystem.CreateHeightMaps();
 
@@ -171,13 +173,11 @@ namespace WandererWorld
             robotSystem.CreateRobots();
         }
 
-        private void CreateRandomHouses(int nHouses, Texture2D wall, Texture2D roof)
+        private void CreateRandomHouses(int nHouses, Texture2D wall1, Texture2D roof1, Texture2D wall2, Texture2D roof2)
         {
             // Max and min values
-            short minWidth = 30;
-            short maxWidth = 100;
-            short minHeight = 100;
-            short maxHeight = 180;
+            short maxScale = 110;
+            short minScale = 70;
 
             short minX = 100;
             short maxX = 950;
@@ -186,12 +186,40 @@ namespace WandererWorld
 
             for(int i = 0; i < nHouses; ++i)
             {
-                Vector3 scale = new Vector3(rnd.Next(minWidth, maxWidth), rnd.Next(minHeight, maxHeight), rnd.Next(minWidth, minHeight));
-                Vector3 pos = new Vector3(rnd.Next(minX, maxX), scale.Y / 2, rnd.Next(minZ, maxZ));
-                HouseComponent house = new HouseComponent(scale, pos, Matrix.CreateRotationY((float)rnd.NextDouble()), wall, roof);
+                var s = rnd.Next(minScale, maxScale);
+                Vector3 scale = new Vector3(s += rnd.Next(0, 20), s + rnd.Next(0, 20), s + rnd.Next(0, 20));
+                Vector3 pos = new Vector3(rnd.Next(minX, maxX), scale.Y / 2 + 20, rnd.Next(minZ, maxZ));
+                var houses = (EntityComponentManager.GetManager().GetComponentByType(typeof(HouseComponent)).Values);
+                bool ok = true;
+                foreach (var h in houses)
+                {
+                    var v = (HouseComponent)h;
+                    if(Vector3.Distance(v.Position, pos) < 150){
+                        ok = false;
+                        break;
+                    }
+                }
 
-                int hid = EntityComponentManager.GetManager().CreateNewEntityId();
-                EntityComponentManager.GetManager().AddComponentToEntity(hid, house);
+                if (ok)
+                {
+                    var wall = wall1;
+                    var roof = roof1;
+                    if (rnd.NextDouble() < .5)
+                    {
+                        wall = wall2;
+                        roof = roof2;
+                    }
+
+
+                    HouseComponent house = new HouseComponent(scale, pos, Matrix.CreateRotationY((float)(rnd.NextDouble() * (Math.PI * 2))), wall, roof);
+
+                    int hid = EntityComponentManager.GetManager().CreateNewEntityId();
+                    EntityComponentManager.GetManager().AddComponentToEntity(hid, house);
+                }
+                else
+                {
+                    --i;
+                }
             }
         }
 

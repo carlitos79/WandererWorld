@@ -44,7 +44,15 @@ namespace WandererWorld.Manager
 
         public Dictionary<int, GenericComponent> GetComponentByType(Type componentType)
         {
-            return componentDictionary[componentType];
+            try
+            {
+                return componentDictionary[componentType];
+            }
+            catch (KeyNotFoundException)
+            {
+                return new Dictionary<int, GenericComponent>();
+            }
+            
         }
     }
 }
