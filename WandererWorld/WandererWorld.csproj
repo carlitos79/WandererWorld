@@ -45,6 +45,7 @@
     <Compile Include="Components\GenericComponent.cs" />
     <Compile Include="Components\HeightMapCameraComponent.cs" />
     <Compile Include="Components\HeightMapComponent.cs" />
+    <Compile Include="Components\HouseBoundingBox.cs" />
     <Compile Include="Components\RobotCameraComponent.cs" />
     <Compile Include="Components\HouseComponent.cs" />
     <Compile Include="Components\RobotComponent.cs" />

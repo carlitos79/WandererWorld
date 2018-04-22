@@ -124,6 +124,7 @@ namespace WandererWorld
                 Rotation = new Vector3(2, 2, 2) * 0.01f,
                 TerrainPosition = new Vector3(0, -100, 256),
             };
+            heightMapCameraComponent.Frustum = new BoundingFrustum(heightMapCameraComponent.ViewMatrix * heightMapCameraComponent.ProjectionMatrix);
 
             //var h1 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(100, 50, -100), Matrix.Identity, BrickTexture, roofTexture);
             //var h2 = new HouseComponent(new Vector3(40, 100, 40), new Vector3(950, 50, -100), Matrix.Identity, BrickTexture, roofTexture);
@@ -154,7 +155,7 @@ namespace WandererWorld
                 TransformMatrices = new Matrix[robotModel.Bones.Count],
                 Effect = new BasicEffect(graphics.GraphicsDevice),
                 Scale = Matrix.CreateScale(0.5f),
-                Position = Vector3.Zero,
+                Position = new Vector3(0f, 1300f, 0f),
                 RobotProjection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, 1280 / 720, 0.1f, 500f),
                 RobotView = Matrix.CreateLookAt(new Vector3(70, 50, 30), new Vector3(0, 0, 20), Vector3.Backward)
             };
@@ -222,6 +223,12 @@ namespace WandererWorld
 
                     int hid = EntityComponentManager.GetManager().CreateNewEntityId();
                     EntityComponentManager.GetManager().AddComponentToEntity(hid, house);
+
+                    HouseBoundingBox hBox = new HouseBoundingBox()
+                    {
+                        BoundingBox = new BoundingBox(pos, pos + scale)
+                    };
+                    EntityComponentManager.GetManager().AddComponentToEntity(hid, hBox);
                 }
                 else
                 {

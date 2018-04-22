@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using WandererWorld.Components;
 using WandererWorld.Interfaces;
@@ -15,6 +16,8 @@ namespace WandererWorld.Systems
 
             foreach (var heightMapCamera in heightMapCameras)
             {
+                var cam = (HeightMapCameraComponent)heightMapCamera.Value;
+                cam.Frustum = new BoundingFrustum(cam.ViewMatrix * cam.ProjectionMatrix);
                 foreach (var heightMap in heightMaps)
                 {
                     var camera = (HeightMapCameraComponent)EntityComponentManager.GetManager().GetComponent(heightMapCamera.Key, typeof(HeightMapCameraComponent));

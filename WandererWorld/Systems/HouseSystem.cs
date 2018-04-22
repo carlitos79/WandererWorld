@@ -21,30 +21,36 @@ namespace WandererWorld.Systems
 
         public void Update()
         {
+            var cam = (HeightMapCameraComponent)EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent)).Values.First();
             var d = EntityComponentManager.GetManager().GetComponentByType(typeof(HouseComponent));
-            foreach(var i in d.Values)
+            foreach(var i in d)
             {
-                // Render the walls with one texture...
-                var vertexBuffer = new VertexBuffer(
-                    game.GraphicsDevice, 
-                    typeof(VertexPositionNormalTexture), 
-                    ((HouseComponent)i).WallVertices.Length, 
-                    BufferUsage.None);
-                vertexBuffer.SetData(((HouseComponent)i).WallVertices);
-                var indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), ((HouseComponent)i).WallIndices.Length, BufferUsage.None);
-                indexBuffer.SetData(((HouseComponent)i).WallIndices);
-                RenderHouses((HouseComponent)i, vertexBuffer, indexBuffer, ((HouseComponent)i).WallTexture);
+                var bbox = (HouseBoundingBox)EntityComponentManager.GetManager().GetComponent(i.Key, typeof(HouseBoundingBox));
+                var house = (HouseComponent)i.Value;
+                if (cam.Frustum.Intersects(bbox.BoundingBox))
+                {
+                    // Render the walls with one texture...
+                    var vertexBuffer = new VertexBuffer(
+                        game.GraphicsDevice,
+                        typeof(VertexPositionNormalTexture),
+                        house.WallVertices.Length,
+                        BufferUsage.None);
+                    vertexBuffer.SetData(house.WallVertices);
+                    var indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), house.WallIndices.Length, BufferUsage.None);
+                    indexBuffer.SetData(house.WallIndices);
+                    RenderHouses(house, vertexBuffer, indexBuffer, house.WallTexture);
 
-                // ...Render the roof with another texture
-                vertexBuffer = new VertexBuffer(
-                    game.GraphicsDevice,
-                    typeof(VertexPositionNormalTexture),
-                    ((HouseComponent)i).RoofVertices.Length,
-                    BufferUsage.None);
-                vertexBuffer.SetData(((HouseComponent)i).RoofVertices);
-                indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), ((HouseComponent)i).RoofIndices.Length, BufferUsage.None);
-                indexBuffer.SetData(((HouseComponent)i).WallIndices);
-                RenderHouses((HouseComponent)i, vertexBuffer, indexBuffer, ((HouseComponent)i).RoofTexture);
+                    // ...Render the roof with another texture
+                    vertexBuffer = new VertexBuffer(
+                        game.GraphicsDevice,
+                        typeof(VertexPositionNormalTexture),
+                        house.RoofVertices.Length,
+                        BufferUsage.None);
+                    vertexBuffer.SetData(house.RoofVertices);
+                    indexBuffer = new IndexBuffer(game.GraphicsDevice, typeof(short), house.RoofIndices.Length, BufferUsage.None);
+                    indexBuffer.SetData(house.WallIndices);
+                    RenderHouses(house, vertexBuffer, indexBuffer, house.RoofTexture);
+                }
             }
         }
 
