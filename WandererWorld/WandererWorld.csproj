@@ -60,10 +60,21 @@
     <Compile Include="Systems\HeightMapRenderSystem.cs" />
     <Compile Include="Systems\HeightMapSystem.cs" />
     <Compile Include="Systems\HeightMapTranformSystem.cs" />
+    <Compile Include="Systems\HeightMapTransformSystem_Wanderer.cs" />
     <Compile Include="Systems\RobotRenderSystem.cs" />
     <Compile Include="Systems\HouseSystem.cs" />
     <Compile Include="Systems\RobotSystem.cs" />
     <Compile Include="Systems\RobotTranformSystem.cs" />
+    <Compile Include="WandererContent\Head.cs" />
+    <Compile Include="WandererContent\IWanderer.cs" />
+    <Compile Include="WandererContent\LeftArm.cs" />
+    <Compile Include="WandererContent\LeftHand.cs" />
+    <Compile Include="WandererContent\LeftLeg.cs" />
+    <Compile Include="WandererContent\RightArm.cs" />
+    <Compile Include="WandererContent\RightHand.cs" />
+    <Compile Include="WandererContent\RightLeg.cs" />
+    <Compile Include="WandererContent\WandererBody.cs" />
+    <Compile Include="WandererContent\WandererLimbs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

@@ -7,6 +7,7 @@ using WandererWorld.Components;
 using WandererWorld.Interfaces;
 using WandererWorld.Manager;
 using WandererWorld.Systems;
+using WandererWorld.WandererContent;
 
 namespace WandererWorld
 {
@@ -17,6 +18,9 @@ namespace WandererWorld
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        private WandererBody wanderer;
+        private HeightMapTransformSystem_Wanderer heightMapTransformSystem_Wanderer;
 
         private Random rnd = new Random();
 
@@ -57,6 +61,9 @@ namespace WandererWorld
         /// </summary>
         protected override void Initialize()
         {
+            wanderer = new WandererBody(this);
+            heightMapTransformSystem_Wanderer = new HeightMapTransformSystem_Wanderer();
+
             heightMapComponent = new HeightMapComponent();
             heightMapCameraComponent = new HeightMapCameraComponent();
 
@@ -170,7 +177,7 @@ namespace WandererWorld
             int robotId = EntityComponentManager.GetManager().CreateNewEntityId();
             EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotComponent);
             EntityComponentManager.GetManager().AddComponentToEntity(robotId, robotCameraComponent);
-            robotSystem.CreateRobots();
+            //robotSystem.CreateRobots();
         }
 
         private void CreateRandomHouses(int nHouses, Texture2D wall1, Texture2D roof1, Texture2D wall2, Texture2D roof2)
@@ -244,10 +251,10 @@ namespace WandererWorld
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            systemsUpdater.Update(heightMapTranformSystem, robotTranformSystem);
+            wanderer.UpdateLimbMovement(gameTime);
+            heightMapTransformSystem_Wanderer.UpdateHeightMap_Wanderer(gameTime, wanderer.movementRotation);
 
-            //Debug.WriteLine("Width: " + heightMapComponent.Width);
-            //Debug.WriteLine("Height: " + heightMapComponent.Height);
+            //systemsUpdater.Update(heightMapTranformSystem, robotTranformSystem);
 
             base.Update(gameTime);
         }
@@ -258,10 +265,11 @@ namespace WandererWorld
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {            
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.CornflowerBlue);            
 
-            systemRenderer.Render(heightMapRenderSystem, robotRenderSystem);
+            systemRenderer.Render(heightMapRenderSystem/*, robotRenderSystem*/);
             houseSystem.Update();
+            wanderer.DrawLimb(gameTime);
 
             base.Draw(gameTime);
         }
