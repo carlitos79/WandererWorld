@@ -259,8 +259,7 @@ namespace WandererWorld
                 Exit();
 
             wanderer.UpdateLimbMovement(gameTime);
-            heightMapTransformSystem_Wanderer.UpdateHeightMap_Wanderer(gameTime, wanderer.movementRotation);
-
+            heightMapTransformSystem_Wanderer.UpdateHeightMap_Wanderer(gameTime);
             //systemsUpdater.Update(heightMapTranformSystem, robotTranformSystem);
 
             base.Update(gameTime);

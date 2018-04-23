@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace WandererWorld.WandererContent
 {
@@ -62,11 +63,26 @@ namespace WandererWorld.WandererContent
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
             {
                 movementRotation = new Vector3(movementRotation.X - 0.05f, movementRotation.Y, movementRotation.Z);
-            }                
+
+                if (movementRotation.X <= -1.55f)
+                {
+                    movementRotation.X += 0.05f;
+                }
+            }      
 
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
             {
                 movementRotation = new Vector3(movementRotation.X + 0.05f, movementRotation.Y, movementRotation.Z);
+
+                if (movementRotation.X >= 1.55f)
+                {
+                    movementRotation.X -= 0.05f;
+                }
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                movementRotation.X = 0;
             }
 
             World = Matrix.Identity *

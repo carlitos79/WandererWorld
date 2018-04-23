@@ -7,7 +7,7 @@ namespace WandererWorld.Systems
 {
     class HeightMapTransformSystem_Wanderer
     {
-        public void UpdateHeightMap_Wanderer(GameTime gameTime, Vector3 movement)
+        public void UpdateHeightMap_Wanderer(GameTime gameTime)
         {
             var heightMapCameras = EntityComponentManager.GetManager().GetComponentByType(typeof(HeightMapCameraComponent));
 
