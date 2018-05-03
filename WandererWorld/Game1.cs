@@ -75,7 +75,7 @@ namespace WandererWorld
 
             heightMapSystem = new HeightmapSystem();
             heightMapTranformSystem = new HeightMapTranformSystem();
-            heightMapRenderSystem = new HeightMapRenderSystem();                   
+            heightMapRenderSystem = new HeightMapRenderSystem(graphics.GraphicsDevice);                   
 
             robotSystem = new RobotSystem();
             robotTranformSystem = new RobotTranformSystem();

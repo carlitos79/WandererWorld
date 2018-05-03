@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using WandererWorld.Components;
 using WandererWorld.Manager;
 
@@ -21,6 +22,58 @@ namespace WandererWorld.Systems
                 SetIndices(hm);
                 CalculateNormals(hm);
                 SetEffects(hm);
+                SetChunks(hm);
+            }
+        }
+
+        private void SetChunks(HeightMapComponent heightmap)
+        {
+            ushort iCapacity = ushort.MaxValue;
+            ushort vCapacity = (ushort)(iCapacity / 6);
+            ushort height = (ushort)(vCapacity / heightmap.Width);
+            ushort width = (ushort)(heightmap.Width);
+            vCapacity = (ushort)(height * width);
+
+            if (heightmap.Chunks == null)
+            {
+                heightmap.Chunks = new List<HeightMapChunk>();
+            }
+
+            int nChunks = (int)(heightmap.Height / height);
+            for (int i = 0; i < nChunks; ++i)
+            {
+                HeightMapChunk hmc = new HeightMapChunk();
+                var vertices = new List<VertexPositionNormalTexture>();
+                for (int y = i * (height - 1); y < i * (height - 1) + height; ++y)
+                {
+                    for (int x = 0; x < width; ++x)
+                    {
+                        vertices.Add(heightmap.Vertices[y * heightmap.Width + x]);
+                    }
+                }
+                hmc.Vertices = vertices.ToArray();
+
+                var indices = new ushort[6 * (width - 1) * (height - 1)];
+                ushort n = 0;
+                for (int y = 0; y < height - 1; y++)
+                    for (int x = 0; x < width - 1; x++)
+                    {
+                        int botLeft = y * width + x;
+                        int botRight = botLeft + 1;
+                        int topLeft = botLeft + width;
+                        int topRight = topLeft + 1;
+
+                        indices[n++] = (ushort)topLeft;
+                        indices[n++] = (ushort)botRight;
+                        indices[n++] = (ushort)botLeft;
+
+                        indices[n++] = (ushort)topLeft;
+                        indices[n++] = (ushort)topRight;
+                        indices[n++] = (ushort)botRight;
+                    }
+                hmc.Indices = indices;
+
+                heightmap.Chunks.Add(hmc);
             }
         }
 
