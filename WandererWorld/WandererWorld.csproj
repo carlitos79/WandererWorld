@@ -69,10 +69,8 @@
     <Compile Include="WandererContent\Head.cs" />
     <Compile Include="WandererContent\IWanderer.cs" />
     <Compile Include="WandererContent\LeftArm.cs" />
-    <Compile Include="WandererContent\LeftHand.cs" />
     <Compile Include="WandererContent\LeftLeg.cs" />
     <Compile Include="WandererContent\RightArm.cs" />
-    <Compile Include="WandererContent\RightHand.cs" />
     <Compile Include="WandererContent\RightLeg.cs" />
     <Compile Include="WandererContent\WandererBody.cs" />
     <Compile Include="WandererContent\WandererLimbs.cs" />

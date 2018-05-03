@@ -19,6 +19,8 @@ namespace WandererWorld
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        private Matrix wandererWorld;
+
         private WandererBody wanderer;
         private HeightMapTransformSystem_Wanderer heightMapTransformSystem_Wanderer;
 
@@ -61,6 +63,8 @@ namespace WandererWorld
         /// </summary>
         protected override void Initialize()
         {
+            wandererWorld = Matrix.Identity;
+
             wanderer = new WandererBody(this);
             heightMapTransformSystem_Wanderer = new HeightMapTransformSystem_Wanderer();
 
@@ -275,7 +279,7 @@ namespace WandererWorld
 
             systemRenderer.Render(heightMapRenderSystem/*, robotRenderSystem*/);
             houseSystem.Update();
-            wanderer.DrawLimb(gameTime);
+            wanderer.DrawLimb(gameTime, wandererWorld);
 
             base.Draw(gameTime);
         }

@@ -12,12 +12,12 @@ namespace WandererWorld.WandererContent
         protected Vector3 scale;
         protected Texture2D texture, robotTexture;
         private VertexPositionNormalTexture[] vertices;
-        private VertexBuffer vertexBuffer;
+        protected VertexBuffer vertexBuffer;
         private short[] indices;
-        private IndexBuffer indexBuffer;
+        protected IndexBuffer indexBuffer;
         protected BasicEffect Effect;
         private Matrix view;
-        private Matrix projection;
+        private Matrix projection;        
 
         // Vertex positions
         private static readonly Vector3 FRONT_TOP_LEFT = new Vector3(-0.5f, 0.5f, 0.5f);
@@ -88,12 +88,11 @@ namespace WandererWorld.WandererContent
             SetupIndices();
             SetupIndexBuffer();
 
-            SetVertexBufferAndIndices();
             SetEffects();
             SetupCamera();
         }
 
-        public void SetEffects()
+        private void SetEffects()
         {
             SetupCamera();
 
@@ -192,18 +191,12 @@ namespace WandererWorld.WandererContent
             indexBuffer.SetData(indices);
         }
 
-        public void SetVertexBufferAndIndices()
-        {
-            game.GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            game.GraphicsDevice.Indices = indexBuffer;
-        }
-
         public virtual void UpdateLimbMovement(GameTime gameTime)
         {
 
         }        
 
-        public virtual void DrawLimb(GameTime gameTime)
+        public virtual void DrawLimb(GameTime gameTime, Matrix world)
         {
 
         }

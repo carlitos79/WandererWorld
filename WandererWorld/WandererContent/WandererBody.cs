@@ -11,40 +11,35 @@ namespace WandererWorld.WandererContent
         private List<IWanderer> children = new List<IWanderer>();
 
         private Game game;
-        private Matrix objectWorld;
-        public float rotationInDegrees;
+        private Matrix limbWorld;
 
-        private Matrix renderRotation;
-        private Vector3 renderPosition;
-        public Vector3 movementRotation = Vector3.Zero;
-        private Vector3 movementPosition = Vector3.Zero;
-
-        //Children's position
-        private Vector3 headPosition = new Vector3(0, 4.5f, 0);
-        private Vector3 rightArmPosition = new Vector3(2.2f, -0.5f, 0);
-        private Vector3 leftArmPosition = new Vector3(-2.2f, -0.5f, 0);
-        private Vector3 leftLegPosition = new Vector3(-0.8f, 2.8f, 0);
-        private Vector3 rightLegPosition = new Vector3(0.8f, 1.8f, 0);
+        private Vector3 parentPosition;
+        private Vector3 parentRotation = Vector3.Zero;
+        private Vector3 jointPosition = new Vector3(0, 0, 0);
 
         public WandererBody(Game game) : base(game, "torso")
         {
             LoadContent();
             this.game = game;
 
-            renderPosition = new Vector3(0, 1, 0);
-            objectWorld = renderRotation = Matrix.Identity;
+            scale = new Vector3(3, 5, 3);
+            parentPosition = new Vector3(0, 1, 0);
 
-            children.Add(new Head(game, headPosition));
-            children.Add(new RightArm(game, rightArmPosition));
-            children.Add(new LeftArm(game, leftArmPosition));
-            children.Add(new RightLeg(game, rightLegPosition));
-            children.Add(new LeftLeg(game, leftLegPosition));
+            children.Add(new Head(game, new Vector3(0, 4.5f, 0)));
+            children.Add(new RightArm(game, new Vector3(2.2f, 1.5f, 0)));
+            children.Add(new LeftArm(game, new Vector3(-2.2f, 1.5f, 0)));
+            children.Add(new RightLeg(game, new Vector3(0.8f, -3.5f, 0)));
+            children.Add(new LeftLeg(game, new Vector3(-0.8f, -3.5f, 0)));
         }
-        public override void DrawLimb(GameTime gameTime)
+
+        public override void DrawLimb(GameTime gameTime, Matrix world)
         {
-            objectWorld = Matrix.CreateScale(scale) * renderRotation * Matrix.CreateTranslation(renderPosition);
-            Effect.World = objectWorld * World;
+            limbWorld = Matrix.CreateScale(scale) * World * Matrix.CreateTranslation(parentPosition);
+            Effect.World = limbWorld * world;
             Effect.Texture = texture;
+
+            game.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            game.GraphicsDevice.Indices = indexBuffer;
 
             foreach (EffectPass effect in Effect.CurrentTechnique.Passes)
             {
@@ -52,43 +47,46 @@ namespace WandererWorld.WandererContent
                 game.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
             }
 
+            // Here is where all the children are drawn
             foreach (IWanderer child in children)
             {
-                child.DrawLimb(gameTime);
+                child.DrawLimb(gameTime, World * world);
             }
         }
 
         public override void UpdateLimbMovement(GameTime gameTime)
         {
+            // Here is where the parent and the children sets in motion.
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
             {
-                movementRotation = new Vector3(movementRotation.X - 0.05f, movementRotation.Y, movementRotation.Z);
+                parentRotation = new Vector3(parentRotation.X - 0.05f, parentRotation.Y, parentRotation.Z);
 
-                if (movementRotation.X <= -1.55f)
+                if (parentRotation.X <= -1.55f)
                 {
-                    movementRotation.X += 0.05f;
+                    parentRotation.X += 0.05f;
                 }
             }      
 
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
             {
-                movementRotation = new Vector3(movementRotation.X + 0.05f, movementRotation.Y, movementRotation.Z);
+                parentRotation = new Vector3(parentRotation.X + 0.05f, parentRotation.Y, parentRotation.Z);
 
-                if (movementRotation.X >= 1.55f)
+                if (parentRotation.X >= 1.55f)
                 {
-                    movementRotation.X -= 0.05f;
+                    parentRotation.X -= 0.05f;
                 }
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
             {
-                movementRotation.X = 0;
+                parentRotation.X = 0;
             }
 
             World = Matrix.Identity *
-                Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(movementRotation.X, movementRotation.Y, movementRotation.Z)) *
-                Matrix.CreateTranslation(movementPosition);
+                Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(parentRotation.X, parentRotation.Y, parentRotation.Z)) *
+                Matrix.CreateTranslation(parentPosition);
 
+            // Here is where all the children are updated
             foreach (IWanderer child in children)
             {
                 child.UpdateLimbMovement(gameTime);

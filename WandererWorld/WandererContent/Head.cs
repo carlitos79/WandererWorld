@@ -7,29 +7,27 @@ namespace WandererWorld.WandererContent
     public class Head : WandererLimbs
     {
         private Game game;
-        private Matrix objectWorld;
+        public Matrix limbWorld;
 
-        private Matrix renderRotation;
-        private Vector3 renderPosition;
-        private Vector3 movementRotation = Vector3.Zero;
-        private Vector3 movementPosition = Vector3.Zero;
-        private Vector3 jointPosition = new Vector3(0, 0.5f, 0);
+        private Vector3 position;
+        private Vector3 rotation = Vector3.Zero;
 
         public Head(Game game, Vector3 position) : base(game, "head")
         {
             LoadContent();
             this.game = game;
 
-            renderPosition = position;
-            objectWorld = Matrix.Identity;
-            renderRotation = Matrix.Identity;
+            this.position = position;
         }
 
-        public override void DrawLimb(GameTime gameTime)
+        public override void DrawLimb(GameTime gameTime, Matrix world)
         {
-            objectWorld = Matrix.CreateScale(scale) * renderRotation * Matrix.CreateTranslation(renderPosition);
-            Effect.World = objectWorld * World;
+            limbWorld = Matrix.CreateScale(scale) * World * Matrix.CreateTranslation(position);
+            Effect.World = limbWorld * world;
             Effect.Texture = texture;
+
+            game.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            game.GraphicsDevice.Indices = indexBuffer;
 
             foreach (EffectPass effect in Effect.CurrentTechnique.Passes)
             {
@@ -40,35 +38,8 @@ namespace WandererWorld.WandererContent
 
         public override void UpdateLimbMovement(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                movementRotation = new Vector3(movementRotation.X - 0.05f, movementRotation.Y, movementRotation.Z);
-
-                if (movementRotation.X <= -1.55f)
-                {
-                    movementRotation.X += 0.05f;
-                }
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                movementRotation = new Vector3(movementRotation.X + 0.05f, movementRotation.Y, movementRotation.Z);
-
-                if (movementRotation.X >= 1.55f)
-                {
-                    movementRotation.X -= 0.05f;
-                }
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                movementRotation.X = 0;
-            }
-
-            World = Matrix.Identity *
-                Matrix.CreateTranslation(movementPosition) *
-                Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(movementRotation.X, movementRotation.Y, movementRotation.Z)) *
-                Matrix.CreateTranslation(jointPosition);
+            // No code is necessary here since this limb gets its rotation and position from its parent
+            // in the DrawLimb method through the parameter Matrix world and it WON'T swing.
         }
     }
 }
