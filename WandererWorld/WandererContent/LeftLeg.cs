@@ -12,7 +12,7 @@ namespace WandererWorld.WandererContent
 
         private Vector3 position;
         private Vector3 rotation = Vector3.Zero;
-        private Vector3 jointPosition = new Vector3(0, 1, 0);
+        private Vector3 jointPosition = new Vector3(0, 2, 0);
 
         public LeftLeg(Game game, Vector3 position) : base(game, "leftLeg")
         {

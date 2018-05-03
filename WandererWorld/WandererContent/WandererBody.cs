@@ -28,8 +28,8 @@ namespace WandererWorld.WandererContent
             children.Add(new Head(game, new Vector3(0, 4.5f, 0)));
             children.Add(new RightArm(game, new Vector3(2.2f, 1.5f, 0)));
             children.Add(new LeftArm(game, new Vector3(-2.2f, 1.5f, 0)));
-            children.Add(new RightLeg(game, new Vector3(0.8f, -3.5f, 0)));
-            children.Add(new LeftLeg(game, new Vector3(-0.8f, -3.5f, 0)));
+            children.Add(new RightLeg(game, new Vector3(0.8f, -3.8f, 0)));
+            children.Add(new LeftLeg(game, new Vector3(-0.8f, -3.8f, 0)));
         }
 
         public override void DrawLimb(GameTime gameTime, Matrix world)
@@ -75,11 +75,6 @@ namespace WandererWorld.WandererContent
                 {
                     parentRotation.X -= 0.05f;
                 }
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                parentRotation.X = 0;
             }
 
             World = Matrix.Identity *
