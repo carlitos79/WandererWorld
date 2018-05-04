@@ -24,5 +24,6 @@ namespace WandererWorld.Components
         public int[] Indices { get; set; }
         public float[,] HeightMapData { get; set; }
         public List<HeightMapChunk> Chunks { get; set; }
+        public bool Loaded { get; set; }
     }
 }

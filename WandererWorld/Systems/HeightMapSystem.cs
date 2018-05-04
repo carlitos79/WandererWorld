@@ -16,13 +16,16 @@ namespace WandererWorld.Systems
             foreach (var heightMap in heightMapsList)
             {
                 var hm = (HeightMapComponent)EntityComponentManager.GetManager().GetComponent(heightMap.Key, typeof(HeightMapComponent));
-
-                SetHeights(hm);
-                SetVertices(hm);
-                SetIndices(hm);
-                CalculateNormals(hm);
-                SetEffects(hm);
-                SetChunks(hm);
+                if (!hm.Loaded)
+                {
+                    SetHeights(hm);
+                    SetVertices(hm);
+                    SetIndices(hm);
+                    CalculateNormals(hm);
+                    SetEffects(hm);
+                    SetChunks(hm);
+                    hm.Loaded = true;
+                }  
             }
         }
 
